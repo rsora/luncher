@@ -10,6 +10,13 @@ import (
 const htmlTemplate = `<html>
 <head>
 	<style>
+	.centered {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		/* bring your own prefixes */
+		transform: translate(-50%, -50%);
+	  }
 	th 
 		{
 		vertical-align: bottom;
@@ -18,16 +25,25 @@ const htmlTemplate = `<html>
 
 	th span 
 		{
-		-ms-writing-mode: tb-rl;
-		-webkit-writing-mode: vertical-rl;
-		writing-mode: vertical-rl;
-		transform: rotate(180deg);
-		white-space: nowrap;
+			/* Safari */
+			-webkit-transform: rotate(-90deg);
+			
+			/* Firefox */
+			-moz-transform: rotate(-90deg);
+			
+			/* IE */
+			-ms-transform: rotate(-90deg);
+			
+			/* Opera */
+			-o-transform: rotate(-90deg);
+			
+			float: left;
+		font-family: monospace; 
 		}
 	</style>
 	</head>
 	
-<table>
+<table class=centered>
 	<tr>
 		<th><span>Bene bene Molto bene</span></th>
 	</tr>
