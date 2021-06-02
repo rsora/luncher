@@ -10,44 +10,27 @@ import (
 const htmlTemplate = `<html>
 <head>
 	<style>
-	.centered {
-		position: fixed;
-		top: 50%;
-		left: 50%;
-		/* bring your own prefixes */
-		transform: translate(-50%, -50%);
-	  }
-	th 
-		{
-		vertical-align: bottom;
-		text-align: center;
-		}
+	
 
-	th span 
+	.rotated 
 		{
-			/* Safari */
-			-webkit-transform: rotate(-90deg);
-			
-			/* Firefox */
-			-moz-transform: rotate(-90deg);
-			
-			/* IE */
-			-ms-transform: rotate(-90deg);
-			
-			/* Opera */
-			-o-transform: rotate(-90deg);
-			
-			float: left;
-		font-family: monospace; 
+			-webkit-transform: translate(-50%, -50%) rotate(-90deg);
+			-moz-transform: translate(-50%, -50%) rotate(-90deg);
+			-ms-transform: translate(-50%, -50%) rotate(-90deg);
+			-o-transform: translate(-50%, -50%) rotate(-90deg);
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			text-align: center;
+			font-family: monospace; 
+			width: 80%;
 		}
 	</style>
 	</head>
 	
-<table class=centered>
-	<tr>
-		<th><span>Bene bene Molto bene</span></th>
-	</tr>
-</table>
+<body>
+	<div class=rotated><h1>Bene bene Molto bene con tante cose buone da mangiare e tanti contorni buoni</h1></div>
+</body>
 </html>`
 
 type App struct {
