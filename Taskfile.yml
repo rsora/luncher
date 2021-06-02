@@ -1,0 +1,28 @@
+version: "3"
+
+tasks:
+  
+  build:dev:
+    desc: Build the project for testing in dev machine
+    cmds:
+      - go build -v -o luncher-dev
+  
+  build:target:
+    desc: Build the project for target platform
+    cmds:
+      - GOOS=linux GOARCH=arm GOARM=6 go build -v
+  
+  run:dev:
+    desc: Run the project for testing in dev machine
+    cmds:
+      - go run .
+  
+  deploy:target:
+    cmds:
+      - task: build:target
+      - ssh -t pi@192.168.1.11 "killall -q luncher || echo 'Process was not running.'"
+      - sleep 1
+      - scp luncher pi@192.168.1.11:test
+      - ssh pi@192.168.1.11 "nohup /home/pi/test/luncher > /dev/null 2>&1 &"
+      - sleep 1
+      - curl 192.168.1.11:8000/status
