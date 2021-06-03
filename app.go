@@ -14,10 +14,10 @@ const htmlTemplate = `<html>
 
 	.rotated 
 		{
-			-webkit-transform: translate(-50%, -50%) rotate(-90deg);
-			-moz-transform: translate(-50%, -50%) rotate(-90deg);
-			-ms-transform: translate(-50%, -50%) rotate(-90deg);
-			-o-transform: translate(-50%, -50%) rotate(-90deg);
+			-webkit-transform: translate(-50%, -50%) rotate(90deg);
+			-moz-transform: translate(-50%, -50%) rotate(90deg);
+			-ms-transform: translate(-50%, -50%) rotate(90deg);
+			-o-transform: translate(-50%, -50%) rotate(90deg);
 			position: fixed;
 			top: 50%;
 			left: 50%;
@@ -29,7 +29,7 @@ const htmlTemplate = `<html>
 	</head>
 	
 <body>
-	<div class=rotated><h1>Bene bene Molto bene con tante cose buone da mangiare e tanti contorni buoni</h1></div>
+	<div class=rotated><h1>Riso alla cantonese saltato con uova, prosciutto, piselli</h1></div>
 </body>
 </html>`
 
