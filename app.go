@@ -7,6 +7,32 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const htmlTemplate = `<html>
+<head>
+	<style>
+	
+
+	.rotated 
+		{
+			-webkit-transform: translate(-50%, -50%) rotate(90deg);
+			-moz-transform: translate(-50%, -50%) rotate(90deg);
+			-ms-transform: translate(-50%, -50%) rotate(90deg);
+			-o-transform: translate(-50%, -50%) rotate(90deg);
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			text-align: center;
+			font-family: monospace; 
+			width: 80%;
+		}
+	</style>
+	</head>
+	
+<body>
+	<div class=rotated><h1>Riso alla cantonese saltato con uova, prosciutto, piselli</h1></div>
+</body>
+</html>`
+
 type App struct {
 	Router *mux.Router
 }
@@ -27,20 +53,20 @@ func (a *App) Run(addr string) {
 }
 
 func (a *App) getProduct(w http.ResponseWriter, r *http.Request) {
-	respondWithHTML(w, http.StatusOK, nil)
+	respondWithHTML(w, http.StatusOK, htmlTemplate)
 }
 
 func (a *App) getStatus(w http.ResponseWriter, r *http.Request) {
-	respondWithHTML(w, http.StatusOK, nil)
+	respondWithHTML(w, http.StatusOK, "ok")
 }
 
 func respondWithError(w http.ResponseWriter, code int, message string) {
-	respondWithHTML(w, code, map[string]string{"error": message})
+	respondWithHTML(w, code, message)
 }
 
-func respondWithHTML(w http.ResponseWriter, code int, payload interface{}) {
+func respondWithHTML(w http.ResponseWriter, code int, payload string) {
 
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(code)
-	w.Write([]byte("ok"))
+	w.Write([]byte(payload))
 }

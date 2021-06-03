@@ -22,7 +22,6 @@ tasks:
     cmds:
       - task: build:target
       - ssh -t pi@192.168.1.11 "killall -q luncher || echo 'Process was not running.'"
-      - sleep 1
       - scp luncher pi@192.168.1.11:test
       - ssh pi@192.168.1.11 "nohup /home/pi/test/luncher > /dev/null 2>&1 &"
       - sleep 1
