@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"log"
 	"net/http"
+	"text/template"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -29,9 +32,13 @@ const htmlTemplate = `<html>
 	</head>
 	
 <body>
-	<div class=rotated><h1>Riso alla cantonese saltato con uova, prosciutto, piselli</h1></div>
+	<div class=rotated><h1>{{ .Recipe }}</h1></div>
 </body>
 </html>`
+
+type Suggestion struct {
+	Recipe string
+}
 
 type App struct {
 	Router *mux.Router
@@ -45,19 +52,34 @@ func (a *App) Initialize() {
 
 func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/status", a.getStatus).Methods("GET")
-	a.Router.HandleFunc("/daily", a.getProduct).Methods("GET")
+	a.Router.HandleFunc("/daily", a.getSuggestion).Methods("GET")
 }
 
 func (a *App) Run(addr string) {
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }
 
-func (a *App) getProduct(w http.ResponseWriter, r *http.Request) {
-	respondWithHTML(w, http.StatusOK, htmlTemplate)
+func (a *App) getSuggestion(w http.ResponseWriter, r *http.Request) {
+	SuggestionList := []Suggestion{{Recipe: "Gazpacho senza cetrioli con polpa di peperoni e crostini di pane ai cereali"},{Recipe: "Pizza"}}
+	s := time.Now().Unix() % 2
+	log.Println(s)
+	sp:= AddSimpleTemplate(htmlTemplate,SuggestionList[s])
+	respondWithHTML(w, http.StatusOK, sp)
 }
 
 func (a *App) getStatus(w http.ResponseWriter, r *http.Request) {
 	respondWithHTML(w, http.StatusOK, "ok")
+}
+
+func AddSimpleTemplate(a string,b Suggestion) string {
+	tmpl := template.Must(template.New("suggestion.recipe").Parse(a))
+	buf := &bytes.Buffer{}
+        err := tmpl.Execute(buf, b)
+	if err != nil {
+		panic(err)
+        }
+	s := buf.String()
+	return s
 }
 
 func respondWithError(w http.ResponseWriter, code int, message string) {
