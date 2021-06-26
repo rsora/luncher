@@ -10,7 +10,7 @@ tasks:
   build:target:
     desc: Build the project for target platform
     cmds:
-      - GOOS=linux GOARCH=arm GOARM=6 go build -v
+      - GOOS=linux GOARCH=arm GOARM=7 go build -v
   
   run:dev:
     desc: Run the project for testing in dev machine
@@ -21,8 +21,8 @@ tasks:
     desc: Deploy on the target node (Raspberry Pi Model 1B)
     cmds:
       - task: build:target
-      - ssh -t pi@192.168.1.11 "killall -q luncher || echo 'Process was not running.'"
-      - scp luncher pi@192.168.1.11:test
-      - ssh pi@192.168.1.11 "nohup /home/pi/test/luncher > /dev/null 2>&1 &"
+      - ssh -t pi@raspberrypi3 "killall -q luncher || echo 'Process was not running.'"
+      - scp luncher pi@raspberrypi3:/home/pi/luncher
+      - ssh pi@raspberrypi3 "nohup /home/pi/luncher > /dev/null 2>&1 &"
       - sleep 1
-      - curl 192.168.1.11:8000/status
+      - curl raspberrypi3:8000/status
