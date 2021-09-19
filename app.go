@@ -60,8 +60,22 @@ func (a *App) Run(addr string) {
 }
 
 func (a *App) getSuggestion(w http.ResponseWriter, r *http.Request) {
-	SuggestionList := []Suggestion{{Recipe: "Gazpacho senza cetrioli con polpa di peperoni e crostini di pane ai cereali"},{Recipe: "Pizza"}}
-	s := time.Now().Unix() % 2
+	SuggestionList := []Suggestion{
+		{Recipe: "Gazpacho senza cetrioli con polpa di peperoni e crostini di pane ai cereali"},
+		{Recipe: "Spaghetti grossi con sugo rosso tonno e olive"},
+		{Recipe: "Insalata di pollo"},
+		{Recipe: "Insalata di riso"},
+		{Recipe: "Insalata tonno, pomodoro e avocado"},
+		{Recipe: "Pasta con ragu'"},
+		{Recipe: "Frittata con le zucchine"},
+		{Recipe: "Spezzatino con sedano e puree di patate e zucchine"},
+		{Recipe: "Spezzatino con sedano e puree di patate e zucchine"},
+		{Recipe: "Spezzatino con sedano e puree di patate e zucchine"},
+		{Recipe: "Spezzatino con sedano e puree di patate e zucchine"},
+		{Recipe: "Spezzatino con sedano e puree di patate e zucchine"},
+		{Recipe: "Spezzatino con sedano e puree di patate e zucchine"},
+	}
+	s := time.Now().Unix() % int64(len(SuggestionList))
 	log.Println(s)
 	sp:= AddSimpleTemplate(htmlTemplate,SuggestionList[s])
 	respondWithHTML(w, http.StatusOK, sp)
