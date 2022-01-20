@@ -26,3 +26,13 @@ tasks:
       - ssh pi@raspberrypi3 "nohup /home/pi/luncher > /dev/null 2>&1 &"
       - sleep 1
       - curl raspberrypi3:8000/status
+  # mount -o remount,rw /dev/block/mmcblk0p5 /system to unlock configuration stored in protected file system in NST
+  ssh:nook:
+    desc: Open SSH shell on the Nook Simple Touch (require ssh key)
+    cmds:
+      - ssh -oKexAlgorithms=+diffie-hellman-group1-sha1 root@nook
+
+  ssh:rpi3:
+    desc: Open SSH shell on the Raspberry Pi 3 (require ssh key)
+    cmds:
+      - ssh pi@raspberrypi3
