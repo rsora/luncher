@@ -68,11 +68,8 @@ func (a *App) getSuggestion(w http.ResponseWriter, r *http.Request) {
 		{Recipe: "Insalata tonno, pomodoro e avocado"},
 		{Recipe: "Pasta con ragu'"},
 		{Recipe: "Frittata con le zucchine"},
-		{Recipe: "Spezzatino con sedano e puree di patate e zucchine"},
-		{Recipe: "Spezzatino con sedano e puree di patate e zucchine"},
-		{Recipe: "Spezzatino con sedano e puree di patate e zucchine"},
-		{Recipe: "Spezzatino con sedano e puree di patate e zucchine"},
-		{Recipe: "Spezzatino con sedano e puree di patate e zucchine"},
+		{Recipe: "Lenticchie rosse e salsiccia in umido"},
+		{Recipe: "Crescia sfogliata fatta in casa con pomodoro mozzarella crudo e guacamole"},
 		{Recipe: "Spezzatino con sedano e puree di patate e zucchine"},
 	}
 	s := time.Now().Unix() % int64(len(SuggestionList))
