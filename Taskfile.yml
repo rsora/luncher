@@ -20,9 +20,9 @@ tasks:
   deploy:target:
     desc: Deploy on the target node (Raspberry Pi Model 1B)
     cmds:
-      - ssh -t pi@raspberrypi3 "docker stop luncher"
-      - ssh -t pi@raspberrypi3 "docker rm luncher"
-      - ssh -t pi@raspberrypi3 "docker prune"
+      - ssh -t pi@raspberrypi3 "docker stop luncher || true"
+      - ssh -t pi@raspberrypi3 "docker rm luncher || true"
+      - ssh -t pi@raspberrypi3 "image prune -a --force || true"
       - ssh -t pi@raspberrypi3 "docker pull ghcr.io/rsora/luncher:latest"
       - ssh -t pi@raspberrypi3 "docker run --name luncher --restart=always -d -p 8000:8000 ghcr.io/rsora/luncher:latest"
       - sleep 5
