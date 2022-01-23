@@ -42,5 +42,6 @@ jobs:
         --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} \
         --file ./Dockerfile \
         --output type=image,push=true .
-        docker tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} ${{ steps.prepare.outputs.docker_image }}:latest
-        docker push ${{ steps.prepare.outputs.docker_image }}:latest
+        # push also as latest
+        docker buildx imagetools create ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} \
+        --tag ${{ steps.prepare.outputs.docker_image }}:latestt
