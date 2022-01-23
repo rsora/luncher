@@ -1,10 +1,5 @@
 version: "3"
 
-env:
-  # the command scans the both wifi and LAN and search for MAC prefix 58:67:1A
-  # that should be the NOOK MAC prefix and returns the IP, because setting a hostname on the nook seems to be impossible
-  NOOK_IP: $(sudo nmap -sn 192.168.1.0/24 | awk '/Nmap scan report/{printf $5;printf " ";getline;getline;print $3;}' | grep -F "58:67:1A" | cut -d" " -f1)
-
 tasks:
   
   build:dev:
@@ -25,17 +20,23 @@ tasks:
   deploy:target:
     desc: Deploy on the target node (Raspberry Pi Model 1B)
     cmds:
-      - task: build:target
-      - ssh -t pi@raspberrypi3 "killall -q luncher || echo 'Process was not running.'"
-      - scp luncher pi@raspberrypi3:/home/pi/luncher
-      - ssh pi@raspberrypi3 "nohup /home/pi/luncher > /dev/null 2>&1 &"
-      - sleep 1
+      - ssh -t pi@raspberrypi3 "docker stop luncher"
+      - ssh -t pi@raspberrypi3 "docker rm luncher"
+      - ssh -t pi@raspberrypi3 "docker prune"
+      - ssh -t pi@raspberrypi3 "docker pull ghcr.io/rsora/luncher:latest"
+      - ssh -t pi@raspberrypi3 "docker run --name luncher --restart=always -d -p 8000:8000 ghcr.io/rsora/luncher:latest"
+      - sleep 5
       - curl raspberrypi3:8000/status
   # mount -o remount,rw /dev/block/mmcblk0p5 /system to unlock configuration stored in protected file system in NST
   ssh:nook:
     desc: Open SSH shell on the Nook Simple Touch (require ssh key)
     cmds:
       - ssh -oKexAlgorithms=+diffie-hellman-group1-sha1 ${NOOK_IP} -l root
+    env:
+      # the command scans the both wifi and LAN and search for MAC prefix 58:67:1A
+      # that should be the NOOK MAC prefix and returns the IP, because setting a hostname on the nook seems to be impossible
+      NOOK_IP: $(sudo nmap -sn 192.168.1.0/24 | awk '/Nmap scan report/{printf $5;printf " ";getline;getline;print $3;}' | grep -F "58:67:1A" | cut -d" " -f1)
+
 
   ssh:rpi3:
     desc: Open SSH shell on the Raspberry Pi 3 (require ssh key)
