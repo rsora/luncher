@@ -20,11 +20,12 @@ tasks:
   deploy:target:
     desc: Deploy on the target node (Raspberry Pi Model 1B)
     cmds:
-      - task: build:target
-      - ssh -t pi@raspberrypi3 "killall -q luncher || echo 'Process was not running.'"
-      - scp luncher pi@raspberrypi3:/home/pi/luncher
-      - ssh pi@raspberrypi3 "nohup /home/pi/luncher > /dev/null 2>&1 &"
-      - sleep 1
+      - ssh -t pi@raspberrypi3 "docker stop luncher"
+      - ssh -t pi@raspberrypi3 "docker rm luncher"
+      - ssh -t pi@raspberrypi3 "docker prune"
+      - ssh -t pi@raspberrypi3 "docker pull ghcr.io/rsora/luncher:latest"
+      - ssh -t pi@raspberrypi3 "docker run --name luncher --restart=always -d -p 8000:8000 ghcr.io/rsora/luncher:latest"
+      - sleep 5
       - curl raspberrypi3:8000/status
   # mount -o remount,rw /dev/block/mmcblk0p5 /system to unlock configuration stored in protected file system in NST
   ssh:nook:
