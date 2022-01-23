@@ -7,7 +7,7 @@ jobs:
   build:    
     runs-on: ubuntu-18.04    
     env:      
-      DOCKER_REGISTRY: https://ghcr.io      
+      DOCKER_REGISTRY: ghcr.io      
       DOCKER_IMAGE: ${{ github.repository }}     
       DOCKER_USERNAME: ${{ github.actor }}
       DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}  

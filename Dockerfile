@@ -6,4 +6,6 @@ COPY . .
 RUN go build ./...
 RUN go install -v ./...
 
+EXPOSE 8000
+
 CMD ["luncher"]
