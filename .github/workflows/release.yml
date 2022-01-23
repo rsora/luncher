@@ -44,4 +44,4 @@ jobs:
         --output type=image,push=true .
         # push also as latest
         docker buildx imagetools create ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} \
-        --tag ${{ steps.prepare.outputs.docker_image }}:latestt
+        --tag ${{ steps.prepare.outputs.docker_image }}:latest
