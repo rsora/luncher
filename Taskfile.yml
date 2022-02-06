@@ -31,11 +31,12 @@ tasks:
   ssh:nook:
     desc: Open SSH shell on the Nook Simple Touch (require ssh key)
     cmds:
-      - ssh -oKexAlgorithms=+diffie-hellman-group1-sha1 ${NOOK_IP} -l root
-    env:
+      - ssh -oKexAlgorithms=+diffie-hellman-group1-sha1 {{.NOOK_IP}} -l root
+    vars:
+      NOOK_IP:
+        sh: sudo nmap -sn 192.168.1.0/24 | awk '/Nmap scan report/{printf $5;printf " ";getline;getline;print $3;}' | grep -F "58:67:1A" | cut -d" " -f1
       # the command scans the both wifi and LAN and search for MAC prefix 58:67:1A
       # that should be the NOOK MAC prefix and returns the IP, because setting a hostname on the nook seems to be impossible
-      NOOK_IP: $(sudo nmap -sn 192.168.1.0/24 | awk '/Nmap scan report/{printf $5;printf " ";getline;getline;print $3;}' | grep -F "58:67:1A" | cut -d" " -f1)
 
 
   ssh:rpi3:
