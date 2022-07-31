@@ -50,3 +50,9 @@ Deploy happens on a Raspberry hosted in my local network
 ```
 task deploy:target
 ```
+
+## How to reboot nook every night to cleanup for (seems like many) memory leaks
+
+```bash
+0 4 * * * ssh -i /home/pi/.ssh/id_rsa -oKexAlgorithms=+diffie-hellman-group1-sha1 root@$(/sbin/arp -n | awk '/58:67:1a/ {print $1}') -t reboot > /tmp/reboot.log 2>&1
+```

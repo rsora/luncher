@@ -20,13 +20,19 @@ tasks:
   deploy:target:
     desc: Deploy on the target node (Raspberry Pi Model 1B)
     cmds:
-      - ssh -t pi@raspberrypi3 "docker stop luncher || true"
-      - ssh -t pi@raspberrypi3 "docker rm luncher || true"
-      - ssh -t pi@raspberrypi3 "image prune -a --force || true"
-      - ssh -t pi@raspberrypi3 "docker pull ghcr.io/rsora/luncher:latest"
-      - ssh -t pi@raspberrypi3 "docker run --name luncher --restart=always -d -p 8000:8000 ghcr.io/rsora/luncher:latest"
+      - ssh -t pi@{{.RPI3_IP}} "docker stop luncher || true"
+      - ssh -t pi@{{.RPI3_IP}} "docker rm luncher || true"
+      - ssh -t pi@{{.RPI3_IP}} "image prune -a --force || true"
+      - ssh -t pi@{{.RPI3_IP}} "docker pull ghcr.io/rsora/luncher:latest"
+      - ssh -t pi@{{.RPI3_IP}} "docker run --name luncher --restart=always -d -p 8000:8000 ghcr.io/rsora/luncher:latest"
       - sleep 5
-      - curl raspberrypi3:8000/status
+      - curl {{.RPI3_IP}}:8000/status
+    vars:
+      RPI3_IP:
+        sh: sudo nmap -sn 192.168.1.0/24 | awk '/Nmap scan report/{printf $5;printf " ";getline;getline;print $3;}' | grep -F "B8:27:EB:BC:58:31" | cut -d" " -f1
+      # the command scans the both wifi and LAN and search for MAC prefix 58:67:1A
+      # that should be the NOOK MAC prefix and returns the IP, because setting a hostname on the nook seems to be impossible
+
   # mount -o remount,rw /dev/block/mmcblk0p5 /system to unlock configuration stored in protected file system in NST
   ssh:nook:
     desc: Open SSH shell on the Nook Simple Touch (require ssh key)
@@ -42,4 +48,9 @@ tasks:
   ssh:rpi3:
     desc: Open SSH shell on the Raspberry Pi 3 (require ssh key)
     cmds:
-      - ssh pi@raspberrypi3
+      - ssh pi@{{.RPI3_IP}}
+    vars:
+      RPI3_IP:
+        sh: sudo nmap -sn 192.168.1.0/24 | awk '/Nmap scan report/{printf $5;printf " ";getline;getline;print $3;}' | grep -F "B8:27:EB:BC:58:31" | cut -d" " -f1
+      # the command scans the both wifi and LAN and search for MAC prefix 58:67:1A
+      # that should be the NOOK MAC prefix and returns the IP, because setting a hostname on the nook seems to be impossible
