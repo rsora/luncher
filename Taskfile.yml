@@ -4,17 +4,20 @@ tasks:
   build:dev:
     desc: Build the project for testing in dev machine
     cmds:
-      - go build -v -o luncher-dev
+      - go build -ldflags "-X main.build=build-dev" -v ./cmd/luncher-api
 
   build:target:
     desc: Build the project for target platform
     cmds:
-      - GOOS=linux GOARCH=arm GOARM=7 go build -v
-
+      - GOOS=linux GOARCH=arm GOARM=7 go build -ldflags "-X
+        main.build={{.COMMIT}}" -v ./cmd/luncher-api
+    vars:
+      COMMIT:
+        sh: git rev-parse --short HEAD
   run:dev:
     desc: Run the project for testing in dev machine
     cmds:
-      - go run .
+      - go run ./cmd/luncher-api
 
   deploy:target:
     desc: Deploy on the target node (Raspberry Pi Model 1B)
