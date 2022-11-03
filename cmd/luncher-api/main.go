@@ -73,7 +73,7 @@ func run() error {
 	// Use `expvarmon` tool to inspect with pretty printing exported vars.
 	go func() {
 		log.Printf("main : Debug Listening %s", cfg.Web.DebugHost)
-		log.Printf("main : Debug Listener closed", http.ListenAndServe(cfg.Web.DebugHost, http.DefaultServeMux()))
+		log.Printf("main : Debug Listener closed", http.ListenAndServe(cfg.Web.DebugHost, http.DefaultServeMux))
 	}()
 
 	// Start the API service
@@ -89,8 +89,8 @@ func run() error {
 	// a.Run(cfg.Web.APIHost)
 
 	api := http.Server{
-		Addr:    cfg.Web.APIHost,
-		Handler: handlers.API(shutdown, log),
+		Addr: cfg.Web.APIHost,
+		//	Handler: handlers.API(shutdown, log),
 	}
 
 	// Make a channel to listen to server errors.
