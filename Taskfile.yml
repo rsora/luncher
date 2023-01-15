@@ -16,6 +16,11 @@ tasks:
     cmds:
       - go run .
 
+  run:help:
+    desc: Run the project for testing in dev machine
+    cmds:
+      - go run . --help
+
   deploy:target:
     desc: Deploy on the target node (Raspberry Pi Model 1B)
     cmds:
