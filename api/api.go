@@ -3,11 +3,17 @@ package api
 import (
 	"context"
 	"net/http"
+	"os"
+	"syscall"
 
-	"github.com/gorilla/mux"
+	"github.com/dimfeld/httptreemux"
 	"github.com/rsora/luncher/handler"
 	"go.uber.org/zap"
 )
+
+// A Handler is a type that handles a http request, it differs from http.Handler
+// because it returns an error and the context is explicitly passed.
+type Handler func(ctx context.Context, w http.ResponseWriter, r *http.Request) error
 
 // APIMuxConfig contains all the mandatory dependencies required by handlers.
 type APIMuxConfig struct {
@@ -16,16 +22,17 @@ type APIMuxConfig struct {
 
 // api represents our server api.
 type api struct {
-	*mux.Router
+	*httptreemux.ContextMux
 	// mw  []web.Middleware
-	log *zap.SugaredLogger
+	log      *zap.SugaredLogger
+	shutdown chan os.Signal
 }
 
 // APIMux constructs a http.Handler with all application routes defined.
 func APIMux(cfg APIMuxConfig) http.Handler {
 	a := &api{
-		Router: mux.NewRouter(),
-		log:    cfg.Log,
+		ContextMux: httptreemux.NewContextMux(),
+		log:        cfg.Log,
 	}
 
 	// // Setup the middleware common to each handler.
@@ -39,8 +46,8 @@ func APIMux(cfg APIMuxConfig) http.Handler {
 	// a.mw = append(a.mw, middleware.Errors(cfg.Log))
 	// a.mw = append(a.mw, middleware.Panics())
 
-	a.Handle(http.MethodGet, "/health", handler.GetSuggestion)
-	return a.Router
+	a.Handle(http.MethodGet, "/daily", handler.GetSuggestion)
+	return a.ContextMux
 }
 
 // Handle sets a handler function for a given HTTP method and path pair
@@ -62,12 +69,16 @@ func (a *api) Handle(method string, path string, handler Handler) {
 		if err := handler(ctx, w, r); err != nil {
 			// Some bad and unrecoverable error happened.
 			a.log.Errorw("handler unrecoverable", "error", err)
+			a.SignalShutdown()
+			return
 		}
 	})
 
-	a.Router.Handle(path, h).Methods(method)
+	a.ContextMux.Handle(method, path, h)
 }
 
-// A Handler is a type that handles a http request, it differs from http.Handler
-// because it returns an error and the context is explicitly passed.
-type Handler func(ctx context.Context, w http.ResponseWriter, r *http.Request) error
+// SignalShutdown is used to gracefully shutdown the app when an integrity
+// issue is identified.
+func (a *api) SignalShutdown() {
+	a.shutdown <- syscall.SIGTERM
+}
