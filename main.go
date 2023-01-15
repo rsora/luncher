@@ -11,7 +11,9 @@ import (
 	"time"
 
 	"github.com/ardanlabs/conf"
-	"github.com/rsora/luncher/api"
+	"github.com/rsora/luncher/app"
+	"github.com/rsora/luncher/app/middleware"
+	"github.com/rsora/luncher/handler"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -77,16 +79,19 @@ func run(log *zap.SugaredLogger) error {
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
 
+	// Setup the middleware common to each handler.
+	// a.mw = append(a.mw, middleware.Errors(cfg.Log))
+	// a.mw = append(a.mw, middleware.Panics())
+
 	// Construct the mux for the API calls.
-	apiMux := api.APIMux(api.APIMuxConfig{
-		// Shutdown: shutdown,
-		Log: log,
-	})
+	app := app.New(shutdown, middleware.Logger(log), middleware.Logger(log))
+
+	app.Handle(http.MethodGet, "/daily", handler.GetSuggestion)
 
 	// Construct a server to service the requests against the mux.
 	api := http.Server{
 		Addr:    cfg.Web.APIHost,
-		Handler: apiMux,
+		Handler: app,
 	}
 
 	// Make a channel to listen for errors coming from the listener. Use a
