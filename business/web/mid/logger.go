@@ -1,12 +1,11 @@
-package middleware
+package mid
 
 import (
 	"context"
 	"net/http"
 	"time"
 
-	"github.com/rsora/luncher/app"
-	"github.com/rsora/luncher/app/web"
+	"github.com/rsora/mywebapp/foundation/web"
 	"go.uber.org/zap"
 )
 
@@ -22,7 +21,7 @@ func Logger(log *zap.SugaredLogger) web.Middleware {
 
 			// If the context is missing this value, request the service
 			// to be shutdown gracefully.
-			v, err := app.GetValues(ctx)
+			v, err := web.GetValues(ctx)
 			if err != nil {
 				return err // web.NewShutdownError("web value missing from context")
 			}

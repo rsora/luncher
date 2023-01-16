@@ -1,4 +1,4 @@
-package app
+package web
 
 import (
 	"context"
@@ -26,4 +26,23 @@ func GetValues(ctx context.Context) (*Values, error) {
 		return nil, errors.New("web value missing from context")
 	}
 	return v, nil
+}
+
+// GetTraceID returns the trace id from the context.
+func GetTraceID(ctx context.Context) string {
+	v, ok := ctx.Value(key).(*Values)
+	if !ok {
+		return "00000000-0000-0000-0000-000000000000"
+	}
+	return v.TraceID
+}
+
+// SetStatusCode sets the status code back into the context.
+func SetStatusCode(ctx context.Context, statusCode int) error {
+	v, ok := ctx.Value(key).(*Values)
+	if !ok {
+		return errors.New("web value missing from context")
+	}
+	v.StatusCode = statusCode
+	return nil
 }
