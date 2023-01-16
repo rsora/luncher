@@ -9,8 +9,7 @@ import (
 	"time"
 
 	"github.com/dimfeld/httptreemux/v5"
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/google/uuid"
 )
 
 // A Handler is a type that handles an http request within our own little mini
@@ -22,7 +21,6 @@ type Handler func(ctx context.Context, w http.ResponseWriter, r *http.Request) e
 // data/logic on this App struct.
 type App struct {
 	mux      *httptreemux.ContextMux
-	otmux    http.Handler
 	shutdown chan os.Signal
 	mw       []Middleware
 }
@@ -41,7 +39,6 @@ func NewApp(shutdown chan os.Signal, mw ...Middleware) *App {
 
 	return &App{
 		mux:      mux,
-		otmux:    otelhttp.NewHandler(mux, "request"),
 		shutdown: shutdown,
 		mw:       mw,
 	}
@@ -58,7 +55,7 @@ func (a *App) SignalShutdown() {
 // tracing. The opentelemetry mux then calls the application mux to handle
 // application traffic. This was setup on line 44 in the NewApp function.
 func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	a.otmux.ServeHTTP(w, r)
+	a.mux.ServeHTTP(w, r)
 }
 
 // Handle sets a handler function for a given HTTP method and path pair
@@ -78,15 +75,12 @@ func (a *App) Handle(method string, group string, path string, handler Handler, 
 		// use it as a separate parameter.
 		ctx := r.Context()
 
-		// Capture the parent request span from the context.
-		span := trace.SpanFromContext(ctx)
-
 		// Set the context with the required values to
 		// process the request.
 		// The Now field has to be used downstream (in the data CRUD layer as well)
 		// as a consistent timestamp for the request handling start.
 		v := Values{
-			TraceID: span.SpanContext().TraceID().String(),
+			TraceID: uuid.New().String(),
 			Now:     time.Now(),
 		}
 		ctx = context.WithValue(ctx, key, &v)

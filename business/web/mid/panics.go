@@ -6,8 +6,7 @@ import (
 	"net/http"
 	"runtime/debug"
 
-	"github.com/rsora/mywebapp/business/sys/expvarmetrics"
-	"github.com/rsora/mywebapp/foundation/web"
+	"github.com/rsora/luncher/foundation/web"
 )
 
 // Panics recovers from panics and converts the panic to an error so it is
@@ -29,8 +28,6 @@ func Panics() web.Middleware {
 					trace := debug.Stack()
 					err = fmt.Errorf("PANIC [%v] TRACE[%s]", rec, string(trace))
 
-					// Updates the metrics stored in the context.
-					expvarmetrics.AddPanics(ctx)
 				}
 			}()
 

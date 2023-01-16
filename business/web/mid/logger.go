@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/rsora/mywebapp/foundation/web"
+	"github.com/rsora/luncher/foundation/web"
 	"go.uber.org/zap"
 )
 

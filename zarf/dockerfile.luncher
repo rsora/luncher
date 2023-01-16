@@ -3,8 +3,8 @@ FROM balenalib/raspberry-pi-debian-golang:latest
 WORKDIR /go/src/app
 COPY . .
 
-RUN go build ./...
-RUN go install -v ./...
+RUN go build -v -o luncher ./app/services/luncher
+RUN go install -v ./app/services/luncher
 
 EXPOSE 8000
 
