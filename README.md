@@ -2,7 +2,7 @@
 
 Propose me what to do for lunch and dinner
 
-<img src="img/photo.jpg" width="800"/>
+<img src="doc/img/photo.jpg" width="800"/>
 
 ## Infrastructure
 
