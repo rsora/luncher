@@ -1,13 +1,12 @@
-package main
+package handler
 
 import (
 	"bytes"
+	"context"
 	"log"
 	"net/http"
 	"text/template"
 	"time"
-
-	"github.com/gorilla/mux"
 )
 
 const htmlTemplate = `<html>
@@ -40,26 +39,25 @@ type Suggestion struct {
 	Recipe string
 }
 
-type App struct {
-	Router *mux.Router
+func respondWithHTML(w http.ResponseWriter, code int, payload string) {
+
+	w.Header().Set("Content-Type", "text/html")
+	w.WriteHeader(code)
+	w.Write([]byte(payload))
 }
 
-func (a *App) Initialize() {
-
-	a.Router = mux.NewRouter()
-	a.initializeRoutes()
+func AddSimpleTemplate(a string, b Suggestion) string {
+	tmpl := template.Must(template.New("suggestion.recipe").Parse(a))
+	buf := &bytes.Buffer{}
+	err := tmpl.Execute(buf, b)
+	if err != nil {
+		panic(err)
+	}
+	s := buf.String()
+	return s
 }
 
-func (a *App) initializeRoutes() {
-	a.Router.HandleFunc("/status", a.getStatus).Methods("GET")
-	a.Router.HandleFunc("/daily", a.getSuggestion).Methods("GET")
-}
-
-func (a *App) Run(addr string) {
-	log.Fatal(http.ListenAndServe(addr, a.Router))
-}
-
-func (a *App) getSuggestion(w http.ResponseWriter, r *http.Request) {
+func GetSuggestion(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	SuggestionList := []Suggestion{
 		{Recipe: "Gazpacho senza cetrioli con polpa di peperoni e crostini di pane ai cereali"},
 		{Recipe: "Spaghetti grossi con sugo rosso tonno e olive"},
@@ -74,32 +72,7 @@ func (a *App) getSuggestion(w http.ResponseWriter, r *http.Request) {
 	}
 	s := time.Now().Unix() % int64(len(SuggestionList))
 	log.Println(s)
-	sp:= AddSimpleTemplate(htmlTemplate,SuggestionList[s])
+	sp := AddSimpleTemplate(htmlTemplate, SuggestionList[s])
 	respondWithHTML(w, http.StatusOK, sp)
-}
-
-func (a *App) getStatus(w http.ResponseWriter, r *http.Request) {
-	respondWithHTML(w, http.StatusOK, "ok")
-}
-
-func AddSimpleTemplate(a string,b Suggestion) string {
-	tmpl := template.Must(template.New("suggestion.recipe").Parse(a))
-	buf := &bytes.Buffer{}
-        err := tmpl.Execute(buf, b)
-	if err != nil {
-		panic(err)
-        }
-	s := buf.String()
-	return s
-}
-
-func respondWithError(w http.ResponseWriter, code int, message string) {
-	respondWithHTML(w, code, message)
-}
-
-func respondWithHTML(w http.ResponseWriter, code int, payload string) {
-
-	w.Header().Set("Content-Type", "text/html")
-	w.WriteHeader(code)
-	w.Write([]byte(payload))
+	return nil
 }

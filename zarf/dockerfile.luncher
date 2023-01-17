@@ -1,0 +1,15 @@
+FROM balenalib/raspberry-pi-debian-golang:latest
+ENV CGO_ENABLED 0 
+
+COPY . /luncher
+
+WORKDIR /luncher/app/services/luncher
+
+RUN go mod tidy
+RUN go build -o /luncher/luncher
+
+EXPOSE 8000
+WORKDIR /luncher
+
+CMD ["./luncher"]
+

@@ -4,7 +4,7 @@ tasks:
   build:dev:
     desc: Build the project for testing in dev machine
     cmds:
-      - go build -v -o luncher-dev
+      - go build -v -o luncher-dev ./app/services/luncher
 
   build:target:
     desc: Build the project for target platform
@@ -16,6 +16,11 @@ tasks:
     cmds:
       - go run .
 
+  run:help:
+    desc: Run a local build of the service with the --help flag
+    cmds:
+      - go run ./app/services/luncher/main.go --help
+
   deploy:target:
     desc: Deploy on the target node (Raspberry Pi Model 1B)
     cmds:
@@ -26,7 +31,7 @@ tasks:
       - ssh -t pi@{{.RPI3_IP}} "docker run --name luncher --restart=always -d -p
         8000:8000 ghcr.io/rsora/luncher:latest"
       - sleep 5
-      - curl {{.RPI3_IP}}:8000/status
+      - curl {{.RPI3_IP}}:8000/daily
     vars:
       RPI3_IP:
         sh:
