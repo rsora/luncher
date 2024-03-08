@@ -32,7 +32,7 @@ const htmlTemplate = `<html>
 	</head>
 	
 <body>
-	<div class=rotated><h1>{{ .Recipe }}</h1></div>
+	<div class=rotated><h1><a href="google.com">{{ .Recipe }}</a></h1></div>
 </body>
 </html>`
 
