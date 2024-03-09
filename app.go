@@ -32,7 +32,7 @@ const htmlTemplate = `<html>
 	</head>
 	
 <body>
-	<div class=rotated><h1><a href="google.com">{{ .Recipe }}</a></h1></div>
+	<div class=rotated><h1><a href="status">{{ .Recipe }}</a></h1></div>
 </body>
 </html>`
 
@@ -74,7 +74,7 @@ func (a *App) getSuggestion(w http.ResponseWriter, r *http.Request) {
 	}
 	s := time.Now().Unix() % int64(len(SuggestionList))
 	log.Println(s)
-	sp:= AddSimpleTemplate(htmlTemplate,SuggestionList[s])
+	sp := AddSimpleTemplate(htmlTemplate, SuggestionList[s])
 	respondWithHTML(w, http.StatusOK, sp)
 }
 
@@ -82,13 +82,13 @@ func (a *App) getStatus(w http.ResponseWriter, r *http.Request) {
 	respondWithHTML(w, http.StatusOK, "ok")
 }
 
-func AddSimpleTemplate(a string,b Suggestion) string {
+func AddSimpleTemplate(a string, b Suggestion) string {
 	tmpl := template.Must(template.New("suggestion.recipe").Parse(a))
 	buf := &bytes.Buffer{}
-        err := tmpl.Execute(buf, b)
+	err := tmpl.Execute(buf, b)
 	if err != nil {
 		panic(err)
-        }
+	}
 	s := buf.String()
 	return s
 }
